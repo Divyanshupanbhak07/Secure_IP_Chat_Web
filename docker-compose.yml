@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: secure_chat_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save "" --appendonly no # Pure in-memory mode for maximum security and zero persistent disk save
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.server
+    container_name: secure_chat_server
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - FRONTEND_URL=http://localhost:5173
+      - REDIS_URL=redis://redis:6379
+      - SESSION_SECRET=docker-production-cryptographic-secret-key-32-chars
+      - TRUST_PROXY=true
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  client:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.client
+    container_name: secure_chat_client
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - server

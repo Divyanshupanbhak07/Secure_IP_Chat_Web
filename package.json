@@ -1,0 +1,33 @@
+{
+  "name": "secure-temporary-chat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Secure IP-Based Temporary Chat Web Application for Academic & Production Use",
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm run dev --workspace=server",
+    "dev:client": "npm run dev --workspace=client",
+    "build": "npm run build --workspace=shared && npm run build --workspace=server && npm run build --workspace=client",
+    "test": "npm run test --workspace=server",
+    "typecheck": "npm run typecheck --workspace=shared && npm run typecheck --workspace=server && npm run typecheck --workspace=client"
+  },
+  "keywords": [
+    "temporary-chat",
+    "privacy",
+    "webrtc",
+    "redis",
+    "socket.io",
+    "cybersecurity",
+    "ephemeral"
+  ],
+  "author": "Cybersecurity & Software Engineering Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
